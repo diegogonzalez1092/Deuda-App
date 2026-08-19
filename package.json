@@ -1,0 +1,26 @@
+{
+  "name": "debt-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Plataforma de regularización de deudas: 85% marketplace, 15% gestoría activa",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@anthropic-ai/sdk": "^0.119.0",
+    "zod": "^4.4.3",
+    "mercadopago": "^3.4.0",
+    "jose": "^6.2.9"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0"
+  }
+}
