@@ -29,7 +29,10 @@ import type {
   SituacionCrediticia,
 } from "./types";
 
-const BCRA_BASE_URL = process.env.BCRA_API_BASE_URL ?? "https://api.bcra.gob.ar";
+// process.env.BCRA_API_BASE_URL puede existir como string vacío (ej. si se
+// importó .env.example a un entorno sin completar el valor) — "" no es
+// undefined, así que `??` sola no alcanza para caer al default.
+const BCRA_BASE_URL = process.env.BCRA_API_BASE_URL?.trim() || "https://api.bcra.gob.ar";
 
 export class BcraApiError extends Error {
   status: number;
