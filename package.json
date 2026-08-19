@@ -12,7 +12,9 @@
   "dependencies": {
     "next": "^15.0.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "@anthropic-ai/sdk": "^0.119.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "typescript": "^5.5.0",
