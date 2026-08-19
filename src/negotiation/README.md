@@ -20,11 +20,29 @@ resolver los puntos de `docs/LEGAL-NOTES.md`.
 5. Si hay acuerdo, se carga como una "oferta" puntual y sigue el flujo normal
    de pago
 
-## TODO (Claude Code)
+## Estado
 
-- [ ] Modelo de datos `NegotiationCase` (estado: abierto/en negociación/
-      cerrado, historial de mensajes/ofertas)
-- [ ] Feature flag: leer `process.env.ENABLE_NEGOTIATION`, si es `false`
-      ocultar la opción en el frontend y bloquear las rutas de API
+`cases.ts` implementa el modelo de datos y el ciclo de vida del caso:
+
+- `openCase()` — abre un caso para una deuda real del usuario (verificada
+  contra `bcra-sync`), anota si ya existe una oferta de marketplace para esa
+  entidad
+- `addMessage()` / `closeCase()` — transiciones de estado
+  (abierto → en_negociacion → cerrado)
+- Cada función chequea `negotiationEnabled()` (`process.env.ENABLE_NEGOTIATION`)
+  y lanza `NegotiationDisabledError` si está apagado — que es el default
+
+No hay persistencia todavía: las funciones son puras (reciben/devuelven
+`NegotiationCase`, no lo guardan en ningún lado) hasta que exista una DB.
+El rango de negociación sugerido por IA (piso/techo, punto 3 del flujo
+previsto arriba) tampoco está implementado — `ai-analysis/offerAnalyzer.ts`
+hoy analiza ofertas ya existentes, no sugiere una contraoferta.
+
+## TODO
+
+- [ ] Persistencia de `NegotiationCase` en DB
+- [ ] Extender `ai-analysis` para sugerir rango de negociación piso/techo
+- [ ] Bloquear las rutas de API en el frontend cuando el flag está apagado
+      (la lógica de bloqueo ya existe en `cases.ts`, falta la capa HTTP)
 - [ ] Panel simple para que el gestor humano vea los casos abiertos y
       cargue el resultado de la negociación

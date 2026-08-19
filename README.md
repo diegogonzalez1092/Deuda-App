@@ -30,20 +30,33 @@ despliega a producción hasta validación legal.
 
 ```
 debt-app/
+├── app/                 # App Router de Next.js (layout.tsx, page.tsx)
 ├── src/
-│   ├── auth/           # Registro, verificación de identidad (DNI propio, no de terceros)
+│   ├── auth/            # Registro, verificación de identidad (DNI propio, no de terceros)
 │   ├── bcra-sync/       # Cliente de la API pública del BCRA (Central de Deudores)
-│   ├── ai-analysis/    # Motor IA: parsea ofertas, calcula quita real, arma benchmark
-│   ├── marketplace/     # Catálogo de ofertas pre-cargadas por entidades + checkout
-│   ├── negotiation/    # Gestoría activa (15%) — flujo asistido/humano, feature-flagged
-│   ├── payments/        # Integración de pasarela de pago
-│   └── dashboard/       # Vista de salud crediticia del usuario (situación 1-5, alertas)
+│   ├── ai-analysis/     # Motor IA: analiza ofertas vía la API de Claude
+│   ├── marketplace/     # Catálogo de ofertas pre-cargadas por entidades + matching
+│   ├── negotiation/     # Gestoría activa (15%) — flujo asistido/humano, feature-flagged
+│   ├── payments/        # Checkout vía Mercado Pago
+│   └── dashboard/       # Vista de salud crediticia del usuario (situación 1-5)
 ├── docs/
 │   ├── ARCHITECTURE.md  # Decisiones técnicas y flujo de datos
-│   └── LEGAL-NOTES.md   # Qué falta validar antes de habilitar cada módulo
+│   ├── LEGAL-NOTES.md   # Qué falta validar antes de habilitar cada módulo
+│   └── NEXT-STEPS.md    # Deploy, bloqueantes antes de producción, UX
 ├── package.json
 └── .env.example
 ```
+
+## Cómo correrla localmente
+
+```
+npm install
+npm run dev
+```
+
+Abre `http://localhost:3000` — muestra el dashboard con datos de ejemplo
+(no hay sesión ni base de datos conectada todavía, ver
+[`docs/NEXT-STEPS.md`](docs/NEXT-STEPS.md)).
 
 ## Fases de desarrollo
 
@@ -82,3 +95,12 @@ explicando qué falta implementar — son el punto de partida para Claude Code.
 - **Pagos**: a definir según el país (Mercado Pago es lo más común en Argentina)
 
 No es un stack cerrado — ajustalo según lo que ya conozcas vos o tu equipo.
+
+## Deploy y próximos pasos
+
+Ver [`docs/NEXT-STEPS.md`](docs/NEXT-STEPS.md): dónde desplegarla (Vercel +
+Postgres administrado), qué bloqueantes no técnicos hay que resolver antes
+de un lanzamiento público (proveedor de KYC, credenciales de Mercado Pago,
+al menos una entidad cargando ofertas, checklist legal), y recomendaciones
+de UX para que la app sea amigable dado que maneja datos sensibles (DNI,
+deuda).
