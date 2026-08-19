@@ -30,6 +30,19 @@ export async function consultarSituacion(
     return { error: "Ingresá un email válido." };
   }
 
-  await createSession({ identificacion, email });
+  try {
+    await createSession({ identificacion, email });
+  } catch (err) {
+    // Falla más común acá: SESSION_SECRET no está seteado en el entorno
+    // (ver .env.example) — sin eso no se puede firmar la cookie de sesión.
+    console.error("consultarSituacion: no se pudo crear la sesión:", err);
+    return {
+      error:
+        "No pudimos iniciar tu sesión por un problema de configuración del servidor. " +
+        "Si sos el administrador: revisá que SESSION_SECRET esté seteado en las " +
+        "variables de entorno.",
+    };
+  }
+
   redirect("/dashboard");
 }
