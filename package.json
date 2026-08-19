@@ -15,7 +15,8 @@
     "react-dom": "^19.0.0",
     "@anthropic-ai/sdk": "^0.119.0",
     "zod": "^4.4.3",
-    "mercadopago": "^3.4.0"
+    "mercadopago": "^3.4.0",
+    "jose": "^6.2.9"
   },
   "devDependencies": {
     "typescript": "^5.5.0",

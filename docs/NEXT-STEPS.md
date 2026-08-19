@@ -13,6 +13,11 @@ el equipo de Next.js, así que el deploy es prácticamente sin configuración:
    de Vercel.
 2. Cargar las variables de `.env.example` en Vercel → Project Settings →
    Environment Variables (con los valores reales, no los placeholders).
+   **`SESSION_SECRET` es la única que hace falta ya mismo** para que el
+   flujo `/consulta` → `/dashboard` funcione (firma la cookie de sesión,
+   ver `src/auth/session.ts`) — generarla con `openssl rand -base64 32`.
+   Las demás (`ANTHROPIC_API_KEY`, `PAYMENTS_API_KEY`, etc.) solo hacen
+   falta cuando se usen esos módulos.
 3. Cada push a `main` despliega a producción automáticamente; cada PR
    genera una URL de preview para probar cambios antes de mergear — muy
    útil para revisar el look & feel con alguien no técnico antes de que

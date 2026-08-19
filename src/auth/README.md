@@ -23,13 +23,30 @@ verificación **no está resuelto todavía**:
   La alternativa más rápida para un MVP es un proveedor privado de KYC
   (validación biométrica + OCR de DNI).
 
+## Sesión sin contraseña ("DNI-first")
+
+`session.ts` implementa un modelo de sesión distinto y más simple, usado
+por `app/consulta` y `app/dashboard`: no hay cuenta ni contraseña, el
+usuario entra su DNI/CUIT/CUIL + email y eso se firma en una cookie
+(JWT vía `jose`, `SESSION_SECRET` en `.env.example`). Mismo modelo que
+ponetealdia.com — el valor es "mirá gratis tu situación", no una cuenta
+tradicional.
+
+Esto es intencionalmente más liviano que `registerUser()`/`Usuario`
+arriba: **no verifica identidad**, solo formato. Es una decisión de
+producto explícita (ver `docs/NEXT-STEPS.md`) para poder mostrar la app
+funcionando sin depender de un proveedor de KYC ni de una base de datos.
+La UI (`app/consulta/page.tsx`) deja explícito que la Central de Deudores
+del BCRA ya es un dato público — la app no expone nada que no se pudiera
+consultar directamente en el sitio del BCRA.
+
 ## TODO
 
 - [ ] Elegir proveedor de verificación real (KYC de terceros — comparar
       costos y cobertura en Argentina — o iniciar el trámite de convenio
       con RENAPER si el volumen lo justifica) e implementar
-      `IdentityVerificationProvider` contra su API
+      `IdentityVerificationProvider` contra su API — necesario recién si
+      se agregan cuentas con contraseña persistentes (`registerUser()`)
 - [ ] Capa de persistencia (`DATABASE_URL`, ver `.env.example`) con el
       DNI/CUIT encriptado at-rest — `registerUser()` todavía no persiste
       nada, devuelve el `Usuario` en memoria
-- [ ] Sesión/autenticación (ej. NextAuth) una vez que haya persistencia

@@ -53,11 +53,15 @@ debt-app/
 
 ```
 npm install
+echo "SESSION_SECRET=$(openssl rand -base64 32)" >> .env.local
 npm run dev
 ```
 
-Abre `http://localhost:3000` — muestra el dashboard con datos de ejemplo
-(no hay sesión ni base de datos conectada todavía, ver
+Abre `http://localhost:3000` — landing con "Consultar mi situación" →
+entrás tu DNI/CUIT/CUIL + email (sin contraseña, ver
+`src/auth/session.ts`) → dashboard con tu deuda real, consultada en vivo
+al BCRA. No hay base de datos todavía — la sesión vive en una cookie
+firmada, no en una cuenta persistente (ver
 [`docs/NEXT-STEPS.md`](docs/NEXT-STEPS.md)).
 
 ## Fases de desarrollo
