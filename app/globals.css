@@ -164,6 +164,26 @@ main.page {
   margin-bottom: 1rem;
 }
 
+.field[role="radiogroup"] {
+  flex-direction: row;
+  gap: 1.5rem;
+}
+
+.field[role="radiogroup"] label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+}
+
+.field select {
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: var(--white);
+}
+
 .field label {
   font-size: 0.9rem;
   font-weight: 600;

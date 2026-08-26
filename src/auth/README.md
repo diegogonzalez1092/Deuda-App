@@ -40,6 +40,27 @@ La UI (`app/consulta/page.tsx`) deja explícito que la Central de Deudores
 del BCRA ya es un dato público — la app no expone nada que no se pudiera
 consultar directamente en el sitio del BCRA.
 
+## Consultar con DNI en vez de CUIT/CUIL
+
+`cuil.ts` (`derivarCuil(dni, sexo)`) calcula el CUIL de una persona física
+a partir de su DNI + sexo registral, con el algoritmo de dígito
+verificador (módulo 11) estándar de AFIP. Es una **heurística, no una
+consulta oficial**: cubre el caso normal, pero puede fallar en casos raros
+(CUIL provisorio, DNIs muy antiguos). Dos mitigaciones ante ese riesgo:
+
+1. El formulario (`app/consulta`) también acepta CUIT/CUIL directo, por si
+   el cálculo no da con la persona correcta.
+2. El dashboard muestra la `denominacion` (nombre/razón social) que
+   devuelve el BCRA para esa identificación, para que el usuario confirme
+   visualmente que la deuda mostrada es la suya.
+
+No se pudo verificar este cálculo contra un validador oficial de AFIP
+desde este entorno (mismo bloqueo de red que el resto de las APIs
+externas) — la lógica está armada a partir del algoritmo públicamente
+documentado del dígito verificador, no de una respuesta real. Si un
+usuario reporta que el CUIL calculado no coincide con el suyo, es la
+primera señal de que hay que revisar `cuil.ts` con una consulta real.
+
 ## TODO
 
 - [ ] Elegir proveedor de verificación real (KYC de terceros — comparar

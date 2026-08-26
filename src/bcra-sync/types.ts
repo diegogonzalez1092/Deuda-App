@@ -91,13 +91,21 @@ export type SituacionCrediticia = 1 | 2 | 3 | 4 | 5;
 export interface Financiacion {
   entidad: string;
   situacion: SituacionCrediticia;
-  monto: number;
+  monto: number; // en pesos (ARS) — ya convertido desde los miles que informa el BCRA
   moneda: string;
   fechaInforme: string; // ISO date
+  /**
+   * Última vez que esta financiación estuvo en situación 1 (normal), según
+   * BCRA. Se usa como aproximación de "desde cuándo" está en mora — no es
+   * un dato exacto de origen de la deuda, es lo más cercano que expone la
+   * Central de Deudores.
+   */
+  situacionNormalDesde: string | null; // ISO date
 }
 
 export interface DeudaSnapshot {
   identificacion: string; // CUIT/CUIL/CDI
+  denominacion: string | null; // nombre/razón social según BCRA — mostrar para que el usuario confirme que es su propia deuda
   fechaConsulta: string; // ISO date
   financiaciones: Financiacion[];
   chequesRechazados: boolean;
