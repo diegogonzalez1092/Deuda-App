@@ -26,6 +26,8 @@ const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7; // 7 días
 export interface SessionData {
   identificacion: string;
   email: string;
+  /** "dni" si identificacion se calculó a partir de un DNI (ver src/auth/cuil.ts) en vez de ingresarse directamente. */
+  origen: "cuit" | "dni";
 }
 
 function getSecretKey(): Uint8Array {
@@ -65,7 +67,11 @@ export async function getSession(): Promise<SessionData | null> {
     if (typeof payload.identificacion !== "string" || typeof payload.email !== "string") {
       return null;
     }
-    return { identificacion: payload.identificacion, email: payload.email };
+    return {
+      identificacion: payload.identificacion,
+      email: payload.email,
+      origen: payload.origen === "dni" ? "dni" : "cuit",
+    };
   } catch {
     return null; // cookie inválida o expirada
   }

@@ -120,13 +120,15 @@ export async function getDeudaSnapshot(identificacion: string): Promise<DeudaSna
   const financiaciones: Financiacion[] = (ultimoPeriodo?.entidades ?? []).map((e) => ({
     entidad: e.entidad,
     situacion: e.situacion as SituacionCrediticia,
-    monto: e.monto,
-    moneda: "ARS", // la Central de Deudores informa todo en miles de pesos ARS
+    monto: e.monto * 1000, // la Central de Deudores informa "monto" en miles de pesos ARS
+    moneda: "ARS",
     fechaInforme: periodoToIsoDate(ultimoPeriodo!.periodo),
+    situacionNormalDesde: e.fechaSit1 || null,
   }));
 
   return {
     identificacion,
+    denominacion: deudas?.denominacion || null,
     fechaConsulta: new Date().toISOString(),
     financiaciones,
     chequesRechazados: (cheques?.causales.length ?? 0) > 0,
