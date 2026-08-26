@@ -16,11 +16,13 @@
     "@anthropic-ai/sdk": "^0.119.0",
     "zod": "^4.4.3",
     "mercadopago": "^3.4.0",
-    "jose": "^6.2.9"
+    "jose": "^6.2.9",
+    "nodemailer": "^9.0.5"
   },
   "devDependencies": {
     "typescript": "^5.5.0",
     "@types/node": "^22.0.0",
-    "@types/react": "^19.0.0"
+    "@types/react": "^19.0.0",
+    "@types/nodemailer": "^8.0.1"
   }
 }

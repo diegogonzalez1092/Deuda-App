@@ -1,8 +1,12 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { createSession } from "../../src/auth/session";
 import { derivarCuil, type Sexo } from "../../src/auth/cuil";
+import { getDeudaSnapshot } from "../../src/bcra-sync/client";
+import { getDolarOficial } from "../../src/fx/dolarOficial";
+import { enviarEmailDeuda } from "../../src/email/sendDeudaEmail";
 
 const IDENTIFICACION_REGEX = /^\d{11}$/;
 const DNI_REGEX = /^\d{7,8}$/;
@@ -13,11 +17,30 @@ export interface ConsultaFormState {
 }
 
 /**
- * No hace la consulta al BCRA acá — solo valida formato/deriva el CUIL,
- * abre sesión y redirige a /dashboard, que es quien efectivamente llama
- * a getDeudaSnapshot(). Evita pedirle la deuda al BCRA dos veces por
- * cada consulta nueva.
+ * Trae la deuda del BCRA una vez más de lo estrictamente necesario
+ * (dashboard/page.tsx vuelve a pedirla para mostrarla) porque el email
+ * tiene que salir en el momento de esta consulta, no en cada visita
+ * posterior al dashboard. Nunca bloquea el flujo: si el BCRA, el dólar
+ * o el envío del mail fallan, se loguea y el usuario igual llega a su
+ * dashboard con la sesión creada.
  */
+async function enviarEmailDeCortesia(identificacion: string, email: string): Promise<void> {
+  try {
+    const [deuda, dolarResult] = await Promise.all([
+      getDeudaSnapshot(identificacion),
+      getDolarOficial().catch(() => null),
+    ]);
+
+    const headersList = await headers();
+    const host = headersList.get("host");
+    const protocol = host?.startsWith("localhost") ? "http" : "https";
+    const asesorUrl = `${protocol}://${host}/asesor`;
+
+    await enviarEmailDeuda({ destinatario: email, deuda, dolar: dolarResult, asesorUrl });
+  } catch (err) {
+    console.error("consultarSituacion: no se pudo enviar el email de deuda:", err);
+  }
+}
 export async function consultarSituacion(
   _prevState: ConsultaFormState,
   formData: FormData
@@ -72,6 +95,8 @@ export async function consultarSituacion(
         "variables de entorno.",
     };
   }
+
+  await enviarEmailDeCortesia(identificacion, email);
 
   redirect("/dashboard");
 }

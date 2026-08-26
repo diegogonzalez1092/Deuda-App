@@ -16,8 +16,13 @@ el equipo de Next.js, así que el deploy es prácticamente sin configuración:
    **`SESSION_SECRET` es la única que hace falta ya mismo** para que el
    flujo `/consulta` → `/dashboard` funcione (firma la cookie de sesión,
    ver `src/auth/session.ts`) — generarla con `openssl rand -base64 32`.
-   Las demás (`ANTHROPIC_API_KEY`, `PAYMENTS_API_KEY`, etc.) solo hacen
-   falta cuando se usen esos módulos.
+   **`GMAIL_APP_PASSWORD` hace falta para que salga el email de detalle
+   de deuda** (ver `src/email/sendDeudaEmail.ts`) — es una "contraseña de
+   aplicación" de `GMAIL_USER`, generada en
+   `myaccount.google.com/apppasswords` (esa cuenta necesita verificación
+   en 2 pasos activada primero; NO es la contraseña normal). Las demás
+   (`ANTHROPIC_API_KEY`, `PAYMENTS_API_KEY`, etc.) solo hacen falta cuando
+   se usen esos módulos.
 3. Cada push a `main` despliega a producción automáticamente; cada PR
    genera una URL de preview para probar cambios antes de mergear — muy
    útil para revisar el look & feel con alguien no técnico antes de que
@@ -50,6 +55,7 @@ antes de mostrarle la app a un usuario real:
 | Credenciales de producción de Mercado Pago | `src/payments` | Cuenta de Mercado Pago habilitada para cobrar + probar con credenciales de test primero |
 | Al menos 1 entidad cargando ofertas | `src/marketplace` | Acuerdo comercial — sin esto no hay catálogo de ofertas (`getActiveOffers()` está sin implementar a propósito) |
 | Checklist legal | `docs/LEGAL-NOTES.md` | Revisión con abogado — obligatorio antes de producción, en especial para `negotiation` |
+| Email a escala | `src/email` | Gmail personal tiene un límite de ~500 emails/día y no está pensado para envío transaccional — migrar a un proveedor dedicado (Resend, SendGrid) con dominio propio verificado antes de tener volumen real |
 
 Mientras estos no estén resueltos, la recomendación (ya en el README) es
 lanzar el MVP solo con **Fases 1-3**: monitoreo de deuda (`bcra-sync` +
