@@ -38,6 +38,18 @@ El rango de negociación sugerido por IA (piso/techo, punto 3 del flujo
 previsto arriba) tampoco está implementado — `ai-analysis/offerAnalyzer.ts`
 hoy analiza ofertas ya existentes, no sugiere una contraoferta.
 
+## Distinto de `app/asesor`
+
+El botón "Consultar con un asesor" del dashboard (`app/asesor`) **no** usa
+este módulo — es un formulario de contacto simple ("quiero que me
+llamen"), sin negociación en nombre del usuario. Se mantuvo separado a
+propósito para no quedar atado al bloqueo legal de `negotiation`: pedir
+que te contacten no tiene el mismo riesgo regulatorio que negociar una
+deuda frente a una entidad acreedora. Si en el futuro `app/asesor`
+termina derivando en abrir un caso real, ahí sí debería pasar a usar
+`openCase()` de este módulo (y quedaría igual de bloqueado por
+`ENABLE_NEGOTIATION` hasta la revisión legal).
+
 ## TODO
 
 - [ ] Persistencia de `NegotiationCase` en DB

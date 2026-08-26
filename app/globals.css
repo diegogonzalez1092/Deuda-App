@@ -176,12 +176,14 @@ main.page {
   font-weight: 500;
 }
 
-.field select {
+.field select,
+.field textarea {
   padding: 0.65rem 0.75rem;
   border: 1px solid #d1d5db;
   border-radius: 8px;
   font-size: 1rem;
   background: var(--white);
+  font-family: inherit;
 }
 
 .field label {

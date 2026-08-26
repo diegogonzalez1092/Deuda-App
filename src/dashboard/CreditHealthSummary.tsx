@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { DeudaSnapshot, Financiacion, SituacionCrediticia } from "../bcra-sync/types";
 import type { Offer } from "../marketplace/offers";
 import { ofertaAplicaAFinanciacion, ofertaVigente } from "../marketplace/offers";
@@ -128,6 +129,12 @@ export function CreditHealthSummary({ deuda, ofertas, dolar }: CreditHealthSumma
           })}
         </ul>
       )}
+
+      <div style={{ marginTop: "1.5rem" }}>
+        <Link href="/asesor" className="btn btn-primary">
+          Consultar con un asesor
+        </Link>
+      </div>
     </section>
   );
 }
