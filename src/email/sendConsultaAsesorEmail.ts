@@ -41,7 +41,9 @@ export async function enviarConsultaAsesorEmail(params: EnviarConsultaAsesorPara
     from: `"Capital Recovery Consulting — Web" <${REMITENTE}>`,
     to: REMITENTE,
     replyTo: emailUsuario,
-    subject: `Nueva consulta de asesor — ${identificacion}`,
+    // "ASESOR" bien visible al arranque para poder identificar de un
+    // vistazo (o filtrar en Gmail) qué necesita acción vs. el resto de la bandeja.
+    subject: `ASESOR — Nueva consulta de ${identificacion}`,
     text,
     html,
   });
