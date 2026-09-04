@@ -1,6 +1,7 @@
 "use server";
 
 import { getSession } from "../../src/auth/session";
+import { enviarConsultaAsesorEmail } from "../../src/email/sendConsultaAsesorEmail";
 
 export interface AsesorFormState {
   error: string | null;
@@ -14,11 +15,10 @@ export interface AsesorFormState {
  * (ver docs/LEGAL-NOTES.md). Esto es solo "quiero que me contacten", sin
  * involucrar negociación con la entidad acreedora.
  *
- * TODO: no hay proveedor de email ni base de datos configurado todavía
- * (ver docs/ARCHITECTURE.md Fase 2) — por ahora la consulta solo queda
- * en los logs del servidor. Conectar con un servicio de email (ej.
- * Resend, SendGrid) o persistirla en DB para que un asesor humano la
- * vea de verdad.
+ * A diferencia del email de cortesía en app/consulta (que es best-effort
+ * y nunca bloquea al usuario), acá el email ES el punto del formulario:
+ * si no se puede enviar, se le avisa al usuario en vez de mostrar un
+ * falso "listo, te contactamos".
  */
 export async function enviarConsultaAsesor(
   _prevState: AsesorFormState,
@@ -34,12 +34,21 @@ export async function enviarConsultaAsesor(
     return { error: "Contanos brevemente qué necesitás.", enviado: false };
   }
 
-  console.log("Nueva consulta a asesor:", {
-    identificacion: session.identificacion,
-    email: session.email,
-    mensaje,
-    fecha: new Date().toISOString(),
-  });
+  try {
+    await enviarConsultaAsesorEmail({
+      identificacion: session.identificacion,
+      emailUsuario: session.email,
+      mensaje,
+    });
+  } catch (err) {
+    console.error("enviarConsultaAsesor: no se pudo enviar el email:", err);
+    return {
+      error:
+        "No pudimos enviar tu consulta por un problema técnico. Probá de nuevo, o " +
+        "escribinos directamente a capitalrecoveryconsulting@gmail.com.",
+      enviado: false,
+    };
+  }
 
   return { error: null, enviado: true };
 }
