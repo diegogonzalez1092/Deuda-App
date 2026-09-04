@@ -1,47 +1,12 @@
 /**
- * Envío del email con el detalle de deuda al usuario, desde
- * capitalrecoveryconsulting@gmail.com vía SMTP de Gmail — no un servicio
- * de terceros simulando esa dirección, para que salga autenticado por
- * Google de verdad (mejor entregabilidad, no queda marcado como spoof).
- * Requiere que esa cuenta de Gmail tenga verificación en 2 pasos activada
- * y una "contraseña de aplicación" generada en
- * myaccount.google.com/apppasswords (ver .env.example, GMAIL_APP_PASSWORD
- * — NO es la contraseña normal de la cuenta).
- *
- * NOTA: Gmail para cuentas personales tiene un límite de ~500 emails/día
- * y no está pensado para envío transaccional a escala. Para producción
- * real conviene migrar a un proveedor dedicado (Resend, SendGrid, etc.)
- * con un dominio propio verificado — queda anotado en docs/NEXT-STEPS.md.
+ * Envío del email con el detalle de deuda al usuario. Ver
+ * ./transporter.ts para cómo/por qué se manda vía SMTP real de Gmail.
  */
 
-import nodemailer from "nodemailer";
 import type { DeudaSnapshot } from "../bcra-sync/types";
 import type { DolarOficial } from "../fx/dolarOficial";
 import { pesosAUsd } from "../fx/dolarOficial";
-
-const REMITENTE = process.env.GMAIL_USER?.trim() || "capitalrecoveryconsulting@gmail.com";
-
-function requireAppPassword(): string {
-  const pass = process.env.GMAIL_APP_PASSWORD;
-  if (!pass) {
-    throw new Error(
-      "GMAIL_APP_PASSWORD no está configurado (ver .env.example) — hace falta para enviar el email"
-    );
-  }
-  return pass;
-}
-
-function getTransporter() {
-  return nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-    auth: {
-      user: REMITENTE,
-      pass: requireAppPassword(),
-    },
-  });
-}
+import { REMITENTE, getTransporter } from "./transporter";
 
 function formatMonto(monto: number): string {
   return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" }).format(monto);
